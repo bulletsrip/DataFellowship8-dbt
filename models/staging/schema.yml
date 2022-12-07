@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+    - name: staginglayer
+      database: datafellowship-370013
+      schema: rawdata
+      tables:
+        - name: yellowtrip_data
+
+
+models:
+  - name: stg_trip
+    description: staging layer for yellowtrip data warehouses

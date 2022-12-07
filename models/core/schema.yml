@@ -1,0 +1,89 @@
+version: 2
+
+models:
+  - name: fact_trip
+    description: "{{ doc('fact_trip') }}"
+    columns:
+      - name: tripid
+        description: "Fact table primary key"    
+      - name: vendor_id
+        description: "Identifier for vendor types"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_vendor')
+              field: vendor_id
+      - name: ratecode_id
+        description: "Identifier for rate codes"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_rate_code')
+              field: ratecode_id
+      - name: payment_id
+        description: "Identifier for payment types"      
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_payment')
+              field: payment_id
+      - name: pickup_time
+        description: "The date and time when the meter was engaged"
+      - name: dropoff_time
+        description: "The date and time when the meter was disengaged"
+      - name: passenger_count
+        description: "The number of passengers in the vehicle"
+      - name: trip_distance
+        description: "The elapsed trip distance in miles reported by the taximeter"
+      - name: fare_amount
+        description: "The time-and-distance fare calculated by the meter"
+      - name: extra
+        description: "Miscellaneous extras and surcharges"
+      - name: tip_amount
+        description: "This field is automatically populated for credit card tips"
+      - name: tolls_amount
+        description: "Total amount of all tolls paid in trip"
+      - name: improvement_surcharge
+        description: "$0.30 improvement surcharge assessed trips at the flag drop. The improvement surcharge began being levied in 2015."
+      - name: total_amount
+        description: "The total amount charged to passengers, not include cash tips"
+
+  - name: dim_vendor
+    description: "{{ doc('dim_vendor') }}"
+    columns:
+    - name: vendor_id
+      tests:
+        - unique
+        - not_null
+    columns:
+    - name: vendor_type_description
+      tests:
+        - not_null
+
+  - name: dim_rate_code
+    description: "{{ doc('dim_rate_code') }}"
+    columns:
+    - name: ratecode_id
+      tests:
+        - not_null
+        - unique
+    columns:
+    - name: ratecode_type_description
+      tests:
+        - not_null
+        - accepted_values:
+            values: ['Standard rate', 'JFK', 'Newark', 'Nassau or Westchester', 'Negotiated fare', 'Group ride']      
+
+  - name: dim_payment
+    description: "{{ doc('dim_payment') }}"
+    columns:
+    - name: payment_id
+      tests:
+        - not_null
+        - unique
+    columns:
+    - name: payment_type_description
+      tests:
+        - not_null
+        - accepted_values:
+            values: ['Credit card', 'Cash', 'No charge', 'Dispute', 'Unknown', 'Voided trip']
